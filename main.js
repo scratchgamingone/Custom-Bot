@@ -1,4 +1,8 @@
+
+import { config } from 'dotenv';
 import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 import {
   Client,
   GatewayIntentBits,
@@ -6,12 +10,6 @@ import {
   REST,
   Routes
 } from 'discord.js';
-import { fileURLToPath } from 'url';
-import { config } from 'dotenv';
-import fs from 'fs';
-import cron from 'node-cron';
-import fetch from 'node-fetch';
-
 config(); // Load .env
 
 const __filename = fileURLToPath(import.meta.url);
@@ -38,6 +36,7 @@ const slashCommands = [];
 const workingCommands = [];
 
 const loadCommands = async (dir) => {
+  const category = dir.split('/').pop(); // 'public', 'booster', 'admin', 'owner'
   const commandsPath = join(__dirname, dir);
   const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
@@ -45,6 +44,7 @@ const loadCommands = async (dir) => {
     const filePath = join(commandsPath, file);
     const command = await import(`file://${filePath}`);
     if ('data' in command.default && 'execute' in command.default) {
+      command.default.category = category; // Add category to the command object
       client.commands.set(command.default.data.name, command.default);
       slashCommands.push(command.default.data.toJSON());
       workingCommands.push(command.default.data.name);
@@ -66,36 +66,6 @@ await loadCommands('commands/admin');
 
 // Load owner commands
 await loadCommands('commands/owner');
-
-async function dailyRandomPing() {
-  try {
-    const guild = await client.guilds.fetch(process.env.SERVER_GUILD);
-    await guild.members.fetch();
-
-    const members = guild.members.cache.filter(member => !member.user.bot);
-    const randomMember = members.random();
-
-    if (!randomMember) {
-      console.log('No non-bot members found in the server.');
-      return;
-    }
-
-    const response = await fetch('https://api.quotable.io/random');
-    const data = await response.json();
-    const randomMessage = data.content;
-
-    const channel = await client.channels.fetch(process.env.RANDOM_PING_LOG);
-
-    if (channel && channel.isTextBased()) {
-      const sentMessage = await channel.send(`${randomMember} ${randomMessage}`);
-      console.log(`Pinged ${randomMember.user.tag} with message: ${randomMessage}`);
-    } else {
-      console.error('Invalid channel for random ping log');
-    }
-  } catch (error) {
-    console.error('Error in dailyRandomPing:', error);
-  }
-}
 
 client.once('ready', async () => {
   console.log(`🤖 Logged in as ${client.user.tag}`);
@@ -133,14 +103,6 @@ client.once('ready', async () => {
   } catch (error) {
     console.error('❌ Failed to send notification message:', error);
   }
-
-  // Schedule daily random ping at 10 AM EST
-  cron.schedule('0 10 * * *', dailyRandomPing, {
-    scheduled: true,
-    timezone: "America/New_York"
-  });
-
-  console.log('✅ Daily random ping scheduled for 10 AM EST');
 });
 
 client.on('interactionCreate', async interaction => {

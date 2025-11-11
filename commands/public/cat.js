@@ -1,3 +1,4 @@
+
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import fetch from 'node-fetch';
 
@@ -11,19 +12,17 @@ export default {
 
         const fetchCatFact = async () => {
             const response = await fetch('https://catfact.ninja/fact');
-            return response.json();
+            const data = await response.json();
+            return data;
         };
 
-        const createCatFactEmbed = (fact) => {
+        const createCatFactEmbed = (catFact) => {
             return new EmbedBuilder()
-                .setColor('#FFA500')
-                .setTitle('Random Cat Fact')
-                .setDescription(fact.fact)
-                .addFields(
-                    { name: 'Length', value: fact.length.toString(), inline: true }
-                )
+                .setColor('#0099ff')
+                .setTitle('Cat Fact')
+                .setDescription(catFact.fact)
                 .setTimestamp()
-                .setFooter({ text: 'Powered by Cat Facts API' });
+                .setFooter({ text: 'Powered by catfact.ninja' });
         };
 
         try {
@@ -34,7 +33,7 @@ export default {
                 .addComponents(
                     new ButtonBuilder()
                         .setCustomId('new_catfact')
-                        .setLabel('Get Another Cat Fact')
+                        .setLabel('Get Another Fact')
                         .setStyle(ButtonStyle.Primary),
                 );
 
@@ -61,7 +60,7 @@ export default {
 
         } catch (error) {
             console.error('Error fetching cat fact:', error);
-            await interaction.editReply('Sorry, I couldn\'t fetch a cat fact at the moment. Try again later!');
+            await interaction.editReply("Sorry, I couldn't fetch a cat fact at the moment. Try again later!");
         }
-    },
+    }
 };

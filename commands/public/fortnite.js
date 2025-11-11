@@ -1,10 +1,11 @@
+
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import fetch from 'node-fetch';
-
 export default {
     data: new SlashCommandBuilder()
         .setName('fortniteitem')
         .setDescription('Get a random Fortnite item'),
+    category: 'public',
 
     async execute(interaction) {
         await interaction.deferReply();
@@ -65,7 +66,7 @@ export default {
                         await i.editReply({ embeds: [newEmbed], components: [row] });
                     } catch (error) {
                         console.error('Error fetching new Fortnite item:', error);
-                        await i.editReply({ content: 'Sorry, I couldn\'t fetch a new Fortnite item. Please try again.', components: [] });
+                        await i.editReply({ content: "Sorry, I couldn't fetch a new Fortnite item. Please try again.", components: [] });
                     }
                 }
             });
@@ -77,7 +78,7 @@ export default {
 
         } catch (error) {
             console.error('Error in Fortnite item command:', error);
-            await interaction.editReply('Sorry, I couldn\'t fetch a Fortnite item at the moment. Try again later!');
+            await interaction.editReply("Sorry, I couldn't fetch a Fortnite item at the moment. Try again later!");
         }
     }
 };
