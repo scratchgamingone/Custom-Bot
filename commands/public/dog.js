@@ -23,16 +23,18 @@ export default {
             return data.message;
         };
 
+// ... existing code
         const createDogEmbed = (imageUrl) => {
             return new EmbedBuilder()
                 .setColor('#FFC0CB')
-                .setTitle('Here's a random dog!')
+                .setTitle('Here\'s a random dog!')
                 .setImage(imageUrl)
                 .setTimestamp()
                 .setFooter({ text: 'Powered by dog.ceo API' });
         };
 
         try {
+// ... existing code
             const imageUrl = await fetchDogImage();
             const embed = createDogEmbed(imageUrl);
 
