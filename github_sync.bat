@@ -1,11 +1,25 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set "repo_url=https://github.com/scratchgamingone/Custom-Bot.git"
+set "repo_url=https://github.com/scratchgamingone/Custom-Bot"
 
 if not exist .git (
     goto :initial_setup
 ) else (
+    REM Check if the remote URL is correct and fix it if it's not.
+    for /f "delims=" %%i in ('git remote get-url origin 2^>nul') do set "current_remote_url=%%i"
+    
+    if "!current_remote_url!" neq "%repo_url%" (
+        echo.
+        echo --- Incorrect remote URL detected! ---
+        echo Current URL: !current_remote_url!
+        echo Expected URL: %repo_url%
+        echo.
+        echo --- Updating remote URL... ---
+        git remote set-url origin %repo_url%
+        echo URL updated successfully!
+        echo.
+    )
     goto :push_changes
 )
 
