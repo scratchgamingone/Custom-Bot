@@ -30,3 +30,4 @@ yarn.lock
 
 # Ignore any local configuration files
 config.json
+.env 
