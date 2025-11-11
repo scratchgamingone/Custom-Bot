@@ -1,0 +1,32 @@
+# .gitignore
+
+# Ignore .env file
+.env
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore npm debug log
+npm-debug.log*
+
+# Ignore yarn integrity file
+.yarn-integrity
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore package-lock.json for projects using npm
+package-lock.json
+
+# Ignore yarn.lock for projects using Yarn
+yarn.lock
+
+# Ignore any local configuration files
+config.json
