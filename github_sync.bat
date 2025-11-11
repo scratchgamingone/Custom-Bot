@@ -37,17 +37,36 @@ REM Create .gitignore
 ) > .gitignore
 
 REM Initialize git repository
+echo.
+echo --- Initializing local repository ---
 git init
 git branch -M main
 
 REM Add remote origin
+echo.
+echo --- Adding remote origin: %repo_url% ---
 git remote add origin %repo_url%
 
+echo.
 echo Initial setup completed! Please commit your files for the first time.
 git add .
 set /p commit_msg="Enter initial commit message: "
-git commit -m "!commit_msg!"
+git commit -m "%commit_msg%"
+
+echo.
+echo --- Pushing initial commit to GitHub ---
 git push -u origin main
+if %errorlevel% neq 0 (
+    echo.
+    echo *****************************************************************
+    echo * Initial push failed. This might be due to unrelated histories.*
+    echo * Trying to pull and merge before pushing again.                *
+    echo *****************************************************************
+    echo.
+    git pull origin main --allow-unrelated-histories
+    git push -u origin main
+)
+
 echo Initial push completed!
 goto :end
 
@@ -83,4 +102,6 @@ echo Push completed!
 goto :end
 
 :end
+echo.
+echo Script finished. Press any key to exit.
 pause
