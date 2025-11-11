@@ -38,6 +38,13 @@ const workingCommands = [];
 const loadCommands = async (dir) => {
   const category = dir.split('/').pop(); // 'public', 'booster', 'admin', 'owner'
   const commandsPath = join(__dirname, dir);
+
+  // Check if the directory exists before trying to read it
+  if (!fs.existsSync(commandsPath)) {
+    console.log(`[INFO] Command directory not found, skipping: ${commandsPath}`);
+    return;
+  }
+
   const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
   for (const file of commandFiles) {

@@ -91,6 +91,12 @@ REM Fetch and pull any changes from the remote repository to avoid conflicts
 echo.
 echo --- Pulling latest changes from remote ---
 git pull origin main
+if %errorlevel% neq 0 (
+    echo.
+    echo --- Pull failed. This is expected if the remote branch doesn't exist yet. ---
+    echo --- Proceeding to push. ---
+    echo.
+)
 
 REM Add all local changes
 echo.
