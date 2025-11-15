@@ -47,7 +47,7 @@ async function getLocationFromIP() {
         if (!response.ok) return null;
         const data = await response.json();
         if (data.status === 'success' && data.zip) {
-            return { zip: data.zip, location: `${data.city}, ${data.region}` };
+            return { zip: data.zip, location: `${data.city}, ${data.region}`, countryCode: data.countryCode };
         }
         return null;
     } catch (error) {
@@ -98,7 +98,7 @@ export default {
             if (!locationData) {
                 return interaction.editReply('Could not determine your location automatically. Please try using a zip code.');
             }
-            const locationQuery = `${locationData.zip},us`;
+            const locationQuery = `${locationData.zip},${locationData.countryCode}`;
             await handleCurrentWeather(interaction, locationQuery, ` for your estimated location: ${locationData.location}`, locationData.zip);
             return;
         }
