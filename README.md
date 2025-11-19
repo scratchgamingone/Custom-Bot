@@ -85,11 +85,7 @@ Here is a list of the currently available slash commands.
 -   `/weather current [zipcode]`: Get the current weather for a US zip code.
 -   `/weather forecast [zipcode]`: Get a 5-day weather forecast for a US zip code.
 
-### Booster Commands (`/`)
 
--   `/ebay track <item_id>`: Track an eBay item by its ID.
-
----
 
 ## 🤝 Contributing
 
