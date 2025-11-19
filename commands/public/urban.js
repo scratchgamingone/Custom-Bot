@@ -1,9 +1,9 @@
 
-import fetch from 'node-fetch';
 import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
-import { promises as fs } from 'fs';
+import fetch from 'node-fetch';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { promises as fs } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,12 +11,12 @@ const __dirname = dirname(__filename);
 export default {
     data: new SlashCommandBuilder()
         .setName('urban')
-        .setDescription('Get a definition from Urban Dictionary')
+        .setDescription('Get the definition of a word from Urban Dictionary')
         .addStringOption(option =>
             option.setName('term')
-                .setDescription('The term to look up (random if not provided)')
+                .setDescription('The word to define')
                 .setRequired(false)),
-
+    
     async execute(interaction) {
         await interaction.deferReply();
 

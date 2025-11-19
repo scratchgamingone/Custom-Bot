@@ -1,14 +1,12 @@
 
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import fetch from 'node-fetch';
+
 export default {
-  data: new SlashCommandBuilder()
-    .setName('joke')
-    .setDescription('Get a random joke'),
+  // The data property is now managed in fun.js
   category: 'public',
 
   async execute(interaction) {
-// ... existing code
     await interaction.deferReply();
 
     const fetchJoke = async () => {
@@ -19,12 +17,7 @@ export default {
     const createJokeEmbed = (joke) => {
       return new EmbedBuilder()
         .setColor('#0099ff')
-
         .setTitle(joke.setup)
-
-
-
-
         .setDescription(joke.punchline)
         .setTimestamp()
         .setFooter({ text: 'Powered by official-joke-api.appspot.com' });
@@ -34,18 +27,15 @@ export default {
       const joke = await fetchJoke();
       const embed = createJokeEmbed(joke);
 
-
-
-
       const row = new ActionRowBuilder()
-      .addComponents(
+        .addComponents(
           new ButtonBuilder()
            .setCustomId('new_joke')
            .setLabel('Get Another Joke')
            .setStyle(ButtonStyle.Primary),
+        );
 
-
-      );      const response = await interaction.editReply({
+      const response = await interaction.editReply({
         embeds: [embed],
         components: [row],
       });
@@ -58,7 +48,6 @@ export default {
           const newEmbed = createJokeEmbed(newJoke);
           await i.editReply({ embeds: [newEmbed], components: [row] });
         }           
-
       });
       
       collector.on('end', () => {
@@ -67,7 +56,6 @@ export default {
       });
 
     } catch (error) {
-
       console.error('Error fetching joke:', error);
 
       const embed = new EmbedBuilder()
@@ -77,15 +65,16 @@ export default {
        .setTimestamp()
        .setFooter({ text: 'Powered by official-joke-api.appspot.com' });
 
-
        await interaction.editReply({ embeds: [embed] });
-       collector.stop();
-       row.components[0].setDisabled(true);
-       interaction.editReply({ components: [row] });
-
-
-
-
-
-    }  }
-};  
+       // The collector might not be defined here, so we add a check.
+       if (interaction.channel) {
+           const response = await interaction.fetchReply();
+           const row = response.components[0];
+           if (row) {
+               row.components[0].setDisabled(true);
+               await interaction.editReply({ components: [row] });
+           }
+       }
+    }
+  }
+};

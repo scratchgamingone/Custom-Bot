@@ -1,10 +1,8 @@
 
-import fetch from 'node-fetch';
 import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
-import dotenv from 'dotenv';
-dotenv.config();
+import fetch from 'node-fetch';
 
-const WEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
+const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 
 // Helper function to get weather icon
 const getWeatherIcon = (iconCode) => `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
@@ -79,32 +77,16 @@ export default {
                         .setDescription('The 5-digit US zip code (optional, random if not provided).')
                         .setRequired(false)
                         .setMinLength(5)
-                        .setMaxLength(5)))
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('local')
-                .setDescription('Get the current weather for your estimated location (ephemeral).')),
+                        .setMaxLength(5))),
 
     async execute(interaction) {
         if (!WEATHER_API_KEY) {
             return interaction.reply({ content: 'The weather API key is not configured. Please contact the bot owner.', ephemeral: true });
         }
 
-        const subcommand = interaction.options.getSubcommand();
-
-        if (subcommand === 'local') {
-            await interaction.deferReply({ ephemeral: true });
-            const locationData = await getLocationFromIP();
-            if (!locationData) {
-                return interaction.editReply('Could not determine your location automatically. Please try using a zip code.');
-            }
-            const locationQuery = `${locationData.zip},${locationData.countryCode}`;
-            await handleCurrentWeather(interaction, locationQuery, ` for your estimated location: ${locationData.location}`, locationData.zip);
-            return;
-        }
-
         await interaction.deferReply();
 
+        const subcommand = interaction.options.getSubcommand();
         let zipCode = interaction.options.getString('zipcode');
         let locationQuery;
         let randomLocationInfo = '';
@@ -136,77 +118,58 @@ export default {
 };
 
 async function handleCurrentWeather(interaction, locationQuery, randomLocationInfo, zipCode) {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${encodeURIComponent(locationQuery)}&appid=${WEATHER_API_KEY}&units=metric`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${locationQuery}&appid=${WEATHER_API_KEY}&units=imperial`);
     const data = await response.json();
 
     if (data.cod !== 200) {
-        return interaction.editReply(`Could not find weather data for the provided zip code. Please check the number.`);
+        return interaction.editReply(`Could not find weather for zip code ${zipCode}.`);
     }
 
-    const tempC = data.main.temp;
-    const feelsLikeC = data.main.feels_like;
-    const tempF = celsiusToFahrenheit(tempC);
-    const feelsLikeF = celsiusToFahrenheit(feelsLikeC);
-
     const embed = new EmbedBuilder()
-        .setColor('#0099ff')
-        .setTitle(`Current Weather in ${data.name} (${zipCode})${randomLocationInfo}`)
-        .setDescription(data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1))
-        .setThumbnail(getWeatherIcon(data.weather[0].icon))
+        .setColor('#3498DB')
+        .setTitle(`Current Weather in ${data.name}${randomLocationInfo}`)
+        .setDescription(`**${data.weather[0].main}**: ${data.weather[0].description}`)
         .addFields(
-            { name: 'Temperature', value: `${tempC.toFixed(1)}°C / ${tempF.toFixed(1)}°F`, inline: true },
-            { name: 'Feels Like', value: `${feelsLikeC.toFixed(1)}°C / ${feelsLikeF.toFixed(1)}°F`, inline: true },
+            { name: 'Temperature', value: `${data.main.temp}°F`, inline: true },
+            { name: 'Feels Like', value: `${data.main.feels_like}°F`, inline: true },
             { name: 'Humidity', value: `${data.main.humidity}%`, inline: true },
-            { name: 'Wind Speed', value: `${data.wind.speed} m/s`, inline: true },
-            { name: 'Pressure', value: `${data.main.pressure} hPa`, inline: true },
-            { name: 'Visibility', value: `${data.visibility / 1000} km`, inline: true }
+            { name: 'Wind Speed', value: `${data.wind.speed} mph`, inline: true }
         )
         .setTimestamp()
-        .setFooter({ text: 'Powered by OpenWeatherMap' });
+        .setFooter({ text: `Weather data for ${zipCode}, US` });
 
     await interaction.editReply({ embeds: [embed] });
 }
 
 async function handleForecast(interaction, locationQuery, randomLocationInfo, zipCode) {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?zip=${encodeURIComponent(locationQuery)}&appid=${WEATHER_API_KEY}&units=metric`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${locationQuery}&appid=${WEATHER_API_KEY}&units=imperial`);
     const data = await response.json();
 
     if (data.cod !== "200") {
-        return interaction.editReply(`Could not find forecast data for the provided zip code. Please check the number.`);
+        return interaction.editReply(`Could not find a forecast for zip code ${zipCode}.`);
     }
 
-    // Group forecasts by day
+    const embed = new EmbedBuilder()
+        .setColor('#2ECC71')
+        .setTitle(`5-Day Weather Forecast for ${data.city.name}${randomLocationInfo}`)
+        .setDescription(`Forecast for the next 5 days, showing conditions at midday.`);
+
     const dailyForecasts = {};
-    data.list.forEach(forecast => {
-        const date = new Date(forecast.dt * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-        if (!dailyForecasts[date]) {
-            dailyForecasts[date] = [];
+    data.list.forEach(item => {
+        const date = new Date(item.dt_txt).toLocaleDateString();
+        if (!dailyForecasts[date] && item.dt_txt.includes("12:00:00")) {
+            dailyForecasts[date] = item;
         }
-        dailyForecasts[date].push(forecast);
     });
 
-    const embed = new EmbedBuilder()
-        .setColor('#0099ff')
-        .setTitle(`5-Day Weather Forecast for ${data.city.name} (${zipCode})${randomLocationInfo}`)
-        .setTimestamp()
-        .setFooter({ text: 'Powered by OpenWeatherMap' });
-
-    // Create a field for each day's forecast summary
-    Object.keys(dailyForecasts).slice(0, 5).forEach(date => {
-        const dayForecasts = dailyForecasts[date];
-        // Find min/max temps for the day
-        const minTempC = Math.min(...dayForecasts.map(f => f.main.temp_min));
-        const maxTempC = Math.max(...dayForecasts.map(f => f.main.temp_max));
-        const minTempF = celsiusToFahrenheit(minTempC);
-        const maxTempF = celsiusToFahrenheit(maxTempC);
-        // Use the weather from around midday for the icon/description
-        const middayForecast = dayForecasts.find(f => new Date(f.dt * 1000).getHours() >= 12) || dayForecasts[0];
-        
+    Object.values(dailyForecasts).slice(0, 5).forEach(forecast => {
         embed.addFields({
-            name: date,
-            value: `**${Math.round(maxTempC)}°C / ${Math.round(maxTempF)}°F** / ${Math.round(minTempC)}°C / ${Math.round(minTempF)}°F - ${middayForecast.weather[0].description}`
+            name: new Date(forecast.dt * 1000).toLocaleDateString('en-US', { weekday: 'long' }),
+            value: `**${forecast.weather[0].main}**\nTemp: ${forecast.main.temp}°F\nWind: ${forecast.wind.speed} mph`,
+            inline: true
         });
     });
 
+    embed.setTimestamp().setFooter({ text: `Weather data for ${zipCode}, US` });
     await interaction.editReply({ embeds: [embed] });
 }
