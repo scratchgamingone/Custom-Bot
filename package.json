@@ -9,6 +9,7 @@
     "dev": "nodemon main.js"
   },
   "dependencies": {
+    "cheerio": "^1.1.2",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
     "igdb-api-node": "^5.0.2",
