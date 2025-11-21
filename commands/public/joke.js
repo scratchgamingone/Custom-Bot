@@ -1,9 +1,10 @@
 
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import fetch from 'node-fetch';
-
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } from 'discord.js';
 export default {
-  // The data property is now managed in fun.js
+  data: new SlashCommandBuilder()
+    .setName('joke')
+    .setDescription('Tells a random joke.'),
   category: 'public',
 
   async execute(interaction) {
@@ -56,25 +57,12 @@ export default {
       });
 
     } catch (error) {
-      console.error('Error fetching joke:', error);
-
-      const embed = new EmbedBuilder()
-       .setColor('#FF0000')
-       .setTitle('Error Fetching Joke')
-       .setDescription('An error occurred while fetching the joke. Please try again later.')
-       .setTimestamp()
-       .setFooter({ text: 'Powered by official-joke-api.appspot.com' });
-
-       await interaction.editReply({ embeds: [embed] });
-       // The collector might not be defined here, so we add a check.
-       if (interaction.channel) {
-           const response = await interaction.fetchReply();
-           const row = response.components[0];
-           if (row) {
-               row.components[0].setDisabled(true);
-               await interaction.editReply({ components: [row] });
-           }
-       }
+      console.error('Error in joke command:', error);
+      if (interaction.deferred || interaction.replied) {
+        await interaction.editReply({ content: 'Oops! Something went wrong while telling a joke.', embeds: [], components: [] });
+      } else {
+        await interaction.reply({ content: 'Oops! Something went wrong while telling a joke.', ephemeral: true });
+      }
     }
-  }
+  },
 };
