@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "cheerio": "^1.1.2",
-    "discord.js": "^14.15.3",
+    "discord.js": "^14.25.1",
     "dotenv": "^16.0.3",
     "igdb-api-node": "^5.0.2",
     "node-cron": "^3.0.3",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^3.3.2",
     "spotify-web-api-node": "^5.0.2"
   },
   "engines": {
