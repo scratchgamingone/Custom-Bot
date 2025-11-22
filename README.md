@@ -1,27 +1,23 @@
 
 # Discord Community Bot
 
-Welcome to the Discord Community Bot! This is a versatile Discord bot built with Node.js and discord.js, designed to enhance community engagement with a variety of fun and utility commands.
+A versatile Discord bot built with Node.js and discord.js, designed to enhance community engagement with a variety of fun and utility commands. It includes special perks for server boosters and a modular command structure.
 
-## ✨ Features
+## Features
 
--   **Fun Commands**: Get random jokes, animal pictures, and more.
--   **Utility Commands**: Look up definitions, weather forecasts, and Fortnite items.
--   **Slash Commands**: Modern and easy-to-use interface within Discord.
--   **Modular Command Handler**: Easily add new commands by dropping files into the respective category folders.
--   **Role-Based Access**: Commands are structured into `public`, `booster`, `admin`, and `owner` categories (though only public and booster are currently implemented).
+- **Fun Commands**: Get random jokes, animal pictures, Urban Dictionary definitions, and more.
+- **Utility Commands**: Check the weather or get stats for Fortnite players.
+- **Booster Perks**: Special commands exclusive to server boosters, like temporarily enabling image permissions in a channel.
+- **Slash Commands**: Modern and easy-to-use slash command integration.
+- **Modular & Extendable**: Organized command structure makes it easy to add new commands.
 
----
+## Prerequisites
 
-## 🚀 Getting Started
+- [Node.js](https://nodejs.org/) (v18.0.0 or higher)
+- [npm](https://www.npmjs.com/) (comes with Node.js)
+- A Discord Bot Token and other API keys.
 
-### Prerequisites
-
--   [Node.js](https://nodejs.org/) v18.0.0 or higher
--   A Discord Bot Token
--   API keys for external services (Weather, eBay, etc.)
-
-### Installation & Setup
+## Installation & Setup
 
 1.  **Clone the repository:**
     ```bash
@@ -59,39 +55,46 @@ Welcome to the Discord Community Bot! This is a versatile Discord bot built with
     ```
 
 4.  **Run the bot:**
-    -   For development (with automatic restarts):
-        ```bash
-        npm run dev
-        ```
-    -   For production:
-        ```bash
-        npm start
-        ```
+    - For development (with automatic restarts):
+      ```bash
+      npm run dev
+      ```
+    - For production:
+      ```bash
+      npm start
+      ```
 
----
+## Available Commands
 
-## 🤖 Available Commands
+Here are some of the commands available in the bot:
 
-Here is a list of the currently available slash commands.
+### Public Commands
+- `/cat`: Get a random picture of a cat.
+- `/dog`: Get a random picture of a dog.
+- `/fortnite <username>`: Get Fortnite stats for a player.
+- `/joke`: Get a random joke.
+- `/randomword`: Get a random word.
+- `/urban [term]`: Get the definition of a word from Urban Dictionary. If no term is provided, a random word is used.
+- `/weather <city>`: Get the current weather for a specified city.
+- `/swcard`: Fetches a random Star Wars card from the Fandom wiki.
+- `/help`: Displays a list of available commands.
 
-### Public Commands (`/`)
+### Booster Commands
+These commands can only be used by users with the "Server Booster" role.
 
--   `/fun joke`: Get a random joke.
--   `/fun cat`: Get a random cat picture and fact.
--   `/fun dog`: Get a random dog picture.
--   `/fortniteitem`: Get a random Fortnite cosmetic item.
--   `/randomword [count]`: Get one or more random words.
--   `/urban <term>`: Look up a term on Urban Dictionary.
--   `/weather current [zipcode]`: Get the current weather for a US zip code.
--   `/weather forecast [zipcode]`: Get a 5-day weather forecast for a US zip code.
+- `/booster perks`: Displays a special thank you message for boosters.
+- `/booster imageperm [duration]`: Temporarily allows everyone to upload images in the current channel. The default duration is 5 minutes.
 
+## Contributing
 
-
-## 🤝 Contributing
-
-Contributions are welcome! If you have ideas for new commands or improvements, feel free to open an issue or submit a pull request.
+Contributions are welcome! If you have ideas for new features or improvements, feel free to fork the repository and submit a pull request.
 
 1.  Fork the Project
 2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
 
-https://discord.gg/KPkJckBQTW - Join my server :)
+## License
+
+This project is open source and available under the MIT License.
