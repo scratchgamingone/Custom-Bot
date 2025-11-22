@@ -21,8 +21,10 @@ A versatile Discord bot built with Node.js and discord.js, designed to enhance c
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/Discord-Bot-main.git
-    cd Discord-Bot-main
+    git clone https://github.com/scratchgamingone/Custom-Bot.git
+    ```
+    ```bash
+    cd Custom-Bot
     ```
 
 2.  **Install dependencies:**
