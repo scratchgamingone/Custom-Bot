@@ -208,6 +208,19 @@ client.once('ready', async () => {
 client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
+  // Channel lock check
+  if (process.env.COMMAND_LOCK_ENABLED === 'true' && interaction.channelId !== process.env.COMMAND_CHANNEL_ID) {
+      // Allow 'listofcommands' to be used anywhere
+      if (interaction.commandName === 'listofcommands') {
+          // Continue execution for listofcommands
+      } else {
+          return interaction.reply({
+              content: `You can only use bot commands in the <#${process.env.COMMAND_CHANNEL_ID}> channel.`,
+              ephemeral: true
+          });
+      }
+  }
+
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
 
