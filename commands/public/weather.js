@@ -1,6 +1,5 @@
 
 import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
 
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 

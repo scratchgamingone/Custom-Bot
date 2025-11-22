@@ -14,7 +14,6 @@
     "dotenv": "^16.0.3",
     "igdb-api-node": "^5.0.2",
     "node-cron": "^3.0.3",
-    "node-fetch": "^3.3.2",
     "spotify-web-api-node": "^5.0.2"
   },
   "engines": {

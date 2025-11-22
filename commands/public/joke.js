@@ -1,5 +1,4 @@
 
-import fetch from 'node-fetch';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } from 'discord.js';
 export default {
   data: new SlashCommandBuilder()
