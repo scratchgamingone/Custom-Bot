@@ -45,6 +45,7 @@ A versatile Discord bot built with Node.js and discord.js, designed to enhance c
     GUILD_ID=your_discord_server_id_here
     COMMAND_CHANNEL_ID=your_channel_id_for_commands
     OWNER_ID=your_discord_user_id
+    PRICE_CHECKER_CATEGORY_ID=your_price_tracker_category_id
 
     # Role IDs (optional)
     BYPASS_ROLE_IDS=role_id_1,role_id_2
@@ -79,13 +80,14 @@ Here are some of the commands available in the bot:
 - `/urban [term]`: Get the definition of a word from Urban Dictionary. If no term is provided, a random word is used.
 - `/weather <city>`: Get the current weather for a specified city.
 - `/swcard`: Fetches a random Star Wars card from the Fandom wiki.
+- `/amazonprice <url>`: Creates a dedicated channel to track the price of an Amazon product and sends alerts when the price changes.
 - `/help`: Displays a list of available commands.
 
 ### Booster Commands
 These commands can only be used by users with the "Server Booster" role.
 
 - `/booster perks`: Displays a special thank you message for boosters.
-- `/booster imageperm [duration]`: Temporarily allows everyone to upload images in the current channel. The default duration is 5 minutes.
+- `/booster imageperm [duration]`: Temporarily grants you permission to upload images in the current channel. The default duration is 5 minutes.
 
 ## Contributing
 
